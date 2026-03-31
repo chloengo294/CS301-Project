@@ -2,7 +2,11 @@
 #include <fstream>
 #include <queue>
 #include <vector>
+#include <stdexcept>
 
+// ==========================
+// Count Frequencies
+// ==========================
 std::map<char, int> countFrequencies(const std::string& filename) {
     std::map<char, int> freqMap;
     std::ifstream inputFile(filename, std::ios::binary);
@@ -12,7 +16,6 @@ std::map<char, int> countFrequencies(const std::string& filename) {
     }
 
     char ch;
-    // Read the file byte by byte to ensure all characters (including whitespace) are counted
     while (inputFile.get(ch)) {
         freqMap[ch]++;
     }
@@ -21,31 +24,43 @@ std::map<char, int> countFrequencies(const std::string& filename) {
     return freqMap;
 }
 
+// ==========================
+// Build Huffman Tree
+// ==========================
 Node* buildHuffmanTree(const std::map<char, int>& freqMap) {
     if (freqMap.empty()) return nullptr;
 
-    // Use a Min-Priority Queue to store tree nodes
     std::priority_queue<Node*, std::vector<Node*>, CompareNodes> pq;
 
-    // Create a leaf node for each character and add it to the priority queue
     for (auto const& [character, frequency] : freqMap) {
         pq.push(new Node(character, frequency));
     }
 
-    // Combine nodes until only the root remains
     while (pq.size() > 1) {
-        // Remove the two nodes with the lowest frequencies
         Node* left = pq.top(); pq.pop();
         Node* right = pq.top(); pq.pop();
 
-        // Create a new internal node with these two nodes as children.
-        // The frequency of this new node is the sum of the children's frequencies.
         int combinedFreq = left->freq + right->freq;
         Node* parent = new Node(combinedFreq, left, right);
 
         pq.push(parent);
     }
 
-    // The remaining node is the root of the Huffman Tree
     return pq.top();
+}
+
+// ==========================
+// ==========================
+void generateCodes(Node* root, std::string currentCode, std::map<char, std::string>& codes) {
+    if (!root) return;
+
+    // Leaf node
+    if (!root->left && !root->right) {
+        // Edge case: only one unique character
+        codes[root->ch] = (currentCode == "") ? "0" : currentCode;
+        return;
+    }
+
+    generateCodes(root->left, currentCode + "0", codes);
+    generateCodes(root->right, currentCode + "1", codes);
 }
