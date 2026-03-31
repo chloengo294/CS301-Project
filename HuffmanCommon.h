@@ -5,21 +5,22 @@
 
 /**
  * Node structure for the Huffman Tree.
- * This will be used by both Shuhada (building) and Chloe (encoding/decoding).
  */
 struct Node {
     char ch;        // The character (only valid for leaf nodes)
     int freq;       // Frequency of the character
-    Node *left;     // Left child (represents bit '0')
-    Node *right;    // Right child (represents bit '1')
+    Node* left;     // Left child (represents bit '0')
+    Node* right;    // Right child (represents bit '1')
 
     // Constructor for a leaf node
-    Node(char character, int frequency) 
-        : ch(character), freq(frequency), left(nullptr), right(nullptr) {}
+    Node(char character, int frequency)
+        : ch(character), freq(frequency), left(nullptr), right(nullptr) {
+    }
 
     // Constructor for an internal node
-    Node(int frequency, Node* l, Node* r) 
-        : ch('\0'), freq(frequency), left(l), right(r) {}
+    Node(int frequency, Node* l, Node* r)
+        : ch('\0'), freq(frequency), left(l), right(r) {
+    }
 
     // Destructor to recursively clean up the tree and prevent memory leaks
     ~Node() {
